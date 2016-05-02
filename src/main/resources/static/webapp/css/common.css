@@ -1,0 +1,30 @@
+html, body{
+	background: url('../assets/background.png') no-repeat center center fixed !important;
+	-webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important; 
+}
+
+#container{
+	border-radius:5px;
+	margin:0 auto;
+	background: white;
+	display: inline-block;
+}
+
+.md-placeholder{
+	color:red !important;
+}
+
+.bgframe{
+	 background: white; 
+	 border-radius:10px; 
+	 padding-bottom:32px !important;
+}
+
+.loginbtn{
+	background-color:#33b0da !important; 
+	color:white !important; 
+	width:100px !important;
+}

@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <title>
+   Outer CGS Chat
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="css/common.css" rel="stylesheet">
+  <link href="css/angular-material.css" rel="stylesheet">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/loading-bar.css" rel="stylesheet" />
+<style type="text/css">
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+</style>
+</head>
+<body layout="row" layout-align="center center" ng-cloak>
+<div ng-controller="loginCtrl" layout-padding layout-wrap flex-gt-md="33" flex-md="33" flex-sm="66" flex-xs="100">
+ <form id="form" role="form">
+    <md-whiteframe class="md-whiteframe-1dp bgframe" layout-padding layout layout-align="center center">
+     <div flex="100">
+    <div layout="row" layout-padding layout-align="center center">
+    <img layout-padding src="assets/CGS-LOGO.png" />
+    </div>
+      <md-input-container md-no-float class="md-block">
+      <input name="userName" id="username" placeholder="User Name" ng-model="User">
+    </md-input-container>
+    <md-input-container md-no-float class="md-block">
+    <input name="password" type="password" id="pwd" placeholder="Password" ng-model="password">
+    <md-icon src="assets/Eye.png"></md-icon>
+  </md-input-container>
+  <section layout="row" layout-align="center center" flex layout-padding>
+    <md-button class="md-raised loginbtn" id="login" ng-click="loginValidate()" flex>Sign In</md-button>
+  </section>
+  <!-- <section layout="row" layout-padding layout-align="center center" flex="100" layout-wrap>
+    <md-button style="color:#a0a0a0">Forgot password?</md-button>
+  </section> -->
+</div>    
+</md-whiteframe>
+</form>
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/ngAdmin.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

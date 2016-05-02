@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+  <meta charset="utf-8" />
+  <title>WebSocket Test</title>
+  <script language="javascript" type="text/javascript">
+
+  //var wsUri = "ws://echo.websocket.org/";
+  var wsUri = "ws://localhost:8080/as";
+  var output;
+
+  function init()
+  {
+    output = document.getElementById("output");
+    testWebSocket();
+  }
+
+  function testWebSocket()
+  {
+    websocket = new WebSocket(wsUri);
+    websocket.binaryType = "arraybuffer";
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+  function sendFile() {
+      var file = document.getElementById('filename').files[0];
+      var reader = new FileReader();
+      var rawData = new ArrayBuffer();            
+
+      reader.loadend = function() {
+
+      }
+      reader.onload = function(e) {
+          rawData = e.target.result;
+          websocket.send(rawData);
+          alert("the File has been transferred.")
+      }
+
+      reader.readAsBinaryString(file);
+
+  }
+  function onOpen(evt)
+  {
+    writeToScreen("CONNECTED");
+    //doSend("WebSocket rocks");
+  }
+
+  function onClose(evt)
+  {
+    writeToScreen("DISCONNECTED");
+  }
+
+  function onMessage(evt)
+  {
+    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+   // websocket.close();
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("SENT: " + message);
+    websocket.send(message);
+  }
+
+  function writeToScreen(message)
+  {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }
+  
+  function sendmessage(){
+	var text = document.getElementById("inputt").value;
+	doSend(text);
+  }
+
+  window.addEventListener("load", init, false);
+
+  
+  function sendFile() {
+      var file = document.getElementById('filename').files[0];
+      websocket.send('filename:'+file.name);
+      var reader = new FileReader();
+      var rawData = new ArrayBuffer();            
+      //alert(file.name);
+
+      reader.loadend = function() {
+
+      }
+      reader.onload = function(e) {
+          rawData = e.target.result;
+          websocket.send(rawData);
+         // alert("the File has been transferred.")
+         // websocket.send('end');
+      }
+
+      reader.readAsArrayBuffer(file);
+
+  }
+  function createNew(){
+		var text = 'createNiaz';
+		doSend(text);
+		wsUri = "ws://localhost:8080/createNiaz";
+		websocket.close();
+		setTimeout(function () {
+	            alert('VIDEO HAS STOPPED');
+	            websocket = new WebSocket(wsUri);
+			    websocket.binaryType = "arraybuffer";
+			    websocket.onopen = function(evt) { onOpen(evt) };
+			    websocket.onclose = function(evt) { onClose(evt) };
+			    websocket.onmessage = function(evt) { onMessage(evt) };
+			    websocket.onerror = function(evt) { onError(evt) };
+			    doSend('Hi this is new text');
+	    }, 5000);
+		
+		
+	  } 
+  
+  </script>
+
+  <h2>WebSocket Test</h2>
+
+  <div id="output"></div><br>
+  <input id="inputt" type="text" ></input><br>
+  <button onclick="sendmessage()" >Button</button>
+  <br>
+    <input type="file" id="filename" /><br>
+    <input type="button" value="Upload" onclick="sendFile()" /><br>
+    <input type="button" value="Close" onclick="websocket.close()" /><br>
+    <input type="button" value="createNew" onclick="createNew()" /><br>
+    
+    

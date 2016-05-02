@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>WebSocket Test</title>
+<script language="javascript" type="text/javascript">
+	//var wsUri = "ws://echo.websocket.org/";
+	var wsUri = "ws://"+window.location.host+"/as/";
+	var output;
+	var person;
+	var filename;
+	var ext;
+
+	function init() {
+		person = prompt("Please enter your name", "Harry Potter");
+		if (person != null) {
+			output = document.getElementById("output");
+			wsUri += person;
+			writeToScreen("I am " + person);
+			testWebSocket();
+		}
+
+	}
+
+	function testWebSocket() {
+		websocket = new WebSocket(wsUri);
+		websocket.binaryType = "arraybuffer";
+		websocket.onopen = function(evt) {
+			onOpen(evt)
+		};
+		websocket.onclose = function(evt) {
+			onClose(evt)
+		};
+		websocket.onmessage = function(evt) {
+			onMessage(evt)
+		};
+		websocket.onerror = function(evt) {
+			onError(evt)
+		};
+	}
+	function onOpen(evt) {
+		writeToScreen("CONNECTED");
+		//send register json to server
+		var userDto = {};
+		userDto.username = person;
+		var messageDto = {};
+		messageDto.userDto = userDto;
+		messageDto.type = 'REGISTER';
+		messageDto.toType = '';
+		messageDto.toId = '';
+		messageDto.message = '';
+		var json = JSON.stringify(messageDto);
+		console.log('json=' + json);
+		doSend(json);
+	}
+
+	function onClose(evt) {
+		writeToScreen("DISCONNECTED");
+	}
+
+	function isImage(name) {
+		if (!name.match(/(jpg|jpeg|png|gif)$/))
+			return false;
+		else
+			return true;
+	}
+	
+	function isVideo(name) {
+		if (!name.match(/(mp4|3gp|ogv)$/))
+			return false;
+		else
+			return true;
+	}
+
+	function onMessage(evt) {
+
+		if (evt.data instanceof ArrayBuffer) {
+			if (isImage(ext)) {
+				handleReceivedImageFile(evt);
+			} else if (isVideo(ext)) {
+				handleReceivedVideoFile(evt);
+			}
+		} else {
+			console.log('else loop');
+			var json = JSON.parse(evt.data);
+			if (json.type == 'FILE_RECEIVED') {
+				filename = json.message;
+				ext = filename.substr(filename.lastIndexOf('.') + 1);
+			}
+			console.log(json.message);
+			writeToScreen('<span style="color: blue;"> ' + evt.data + '</span>');
+		}
+	}
+
+	function handleReceivedImageFile(evt) {
+		var arrayBuffer = evt.data;
+		var bytes = new Uint8Array(arrayBuffer);
+		var blob = new Blob([ bytes.buffer ]);
+
+		var image = document.createElement("img");
+		image.style.width = '100px';
+		image.style.height = '100px';
+		output.appendChild(image);
+
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			image.src = e.target.result;
+		};
+		reader.readAsDataURL(blob);
+	}
+	
+	function handleReceivedVideoFile(evt) {
+		var arrayBuffer = evt.data;
+		var bytes = new Uint8Array(arrayBuffer);
+		var originalBlob = new Blob([ bytes.buffer ]);
+		var blob = originalBlob.slice(0, originalBlob.size, 'video/mp4')
+		var video = document.createElement('video');
+
+		
+		
+	//	video.style.width = '100px';
+	//	video.style.height = '100px';
+		output.appendChild(video);
+
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			video.src = e.target.result;
+		};
+		video.autoPlay = true;
+		reader.readAsDataURL(blob);
+	}
+
+	function onError(evt) {
+		writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+	}
+
+	function doSend(message) {
+		websocket.send(message);
+	}
+
+	function writeToScreen(message) {
+		var pre = document.createElement("p");
+		pre.style.wordWrap = "break-word";
+		pre.innerHTML = message;
+		output.appendChild(pre);
+	}
+
+	function sendPublicMessage() {
+		var text = document.getElementById("inputt").value;
+		var session_text = document.getElementById("inputto").value;
+		//send register json to server
+		var userDto = {};
+		userDto.username = person;
+		var messageDto = {};
+		messageDto.userDto = userDto;
+		messageDto.toType = 'PUBLIC';
+		messageDto.type = 'TEXT_MESSAGE';
+		messageDto.toId = '';
+		messageDto.message = text;
+		var json = JSON.stringify(messageDto);
+		console.log('json=' + json);
+		doSend(json);
+	}
+
+	function sendPrivateMessage() {
+		var text = document.getElementById("inputt").value;
+		var session_text = document.getElementById("inputto").value;
+		//send register json to server
+		var userDto = {};
+		userDto.username = person;
+		var messageDto = {};
+		messageDto.userDto = userDto;
+		messageDto.toType = 'PRIVATE';
+		messageDto.type = 'TEXT_MESSAGE';
+		messageDto.toId = session_text;
+		messageDto.message = text;
+		var json = JSON.stringify(messageDto);
+		console.log('json=' + json);
+		doSend(json);
+	}
+
+	window.addEventListener("load", init, false);
+
+	function sendPublicFile() {
+		try {
+			var file = document.getElementById('filename').files[0];
+			//websocket.send('filename:'+file.name);
+			var text = document.getElementById("inputt").value;
+			var session_text = document.getElementById("inputto").value;
+			//send register json to server
+			var userDto = {};
+			userDto.username = person;
+			var messageDto = {};
+			messageDto.userDto = userDto;
+			messageDto.toType = 'PUBLIC';
+			messageDto.type = 'BINARY_MESSAGE';
+			messageDto.filename = file.name;
+			var json = JSON.stringify(messageDto);
+			doSend(json);
+
+			var reader = new FileReader();
+			var rawData = new ArrayBuffer();
+
+			reader.onload = function(e) {
+				rawData = e.target.result;
+
+				// console.log(rawData);
+				websocket.binaryType = "arraybuffer";
+				websocket.send(rawData);
+
+				//alert("the File has been transferred.")
+			}
+
+			reader.readAsArrayBuffer(file);
+		} catch (err) {
+			alert(err);
+		}
+	}
+
+	function sendPrivateFile() {
+		try {
+			var file = document.getElementById('filename').files[0];
+			//websocket.send('filename:'+file.name);
+			var text = document.getElementById("inputt").value;
+			var session_text = document.getElementById("inputto").value;
+			//send register json to server
+			var userDto = {};
+			userDto.username = person;
+			var messageDto = {};
+			messageDto.userDto = userDto;
+			messageDto.toType = 'PRIVATE';
+			messageDto.toId = session_text;
+			messageDto.type = 'BINARY_MESSAGE';
+			messageDto.filename = file.name;
+			var json = JSON.stringify(messageDto);
+			doSend(json);
+
+			var reader = new FileReader();
+			var rawData = new ArrayBuffer();
+
+			reader.onload = function(e) {
+				rawData = e.target.result;
+
+				// console.log(rawData);
+				websocket.binaryType = "arraybuffer";
+				websocket.send(rawData);
+
+				//alert("the File has been transferred.")
+			}
+
+			reader.readAsArrayBuffer(file);
+		} catch (err) {
+			alert(err);
+		}
+	}
+	
+	function capture(){
+	    var canvas = document.getElementById('canvas');
+	    var video = document.getElementById('video');
+	    canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+	}
+</script>
+
+<h2>WebSocket Test</h2>
+
+<div id="output"></div>
+<br>
+<input id="inputto" type="text"></input>
+<br>
+<input id="inputt" type="text"></input>
+<br>
+<button onclick="sendPublicMessage()">Public</button>
+<br>
+<button onclick="sendPrivateMessage()">Private</button>
+<br>
+<input type="file" id="filename" />
+<br>
+<input type="button" value="Public Upload" onclick="sendPublicFile()" />
+<br>
+<input type="button" value="Private Upload" onclick="sendPrivateFile()" />
+<br>

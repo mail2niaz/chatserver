@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html ng-app="app">
+    <head nowrap>
+        <meta charset="utf-8">
+        <title>Chat Admin</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8" />
+        <link href="css/adminstyles.css" rel="stylesheet" />
+        <link href="../css/angular-material.css" rel="stylesheet" />
+        <link href="../css/bootstrap.css" rel="stylesheet" />
+        <link href="../css/loading-bar.css" rel="stylesheet" />
+        <link href="../css/material-datetimepicker.css" rel="stylesheet" />
+        <link href="../css/mdPickers.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <script src="../js/ngAdmin.min.js"></script>
+        <!--         <script src="js/services.js"></script> -->
+    </head>
+    <body layout="row" ng-cloak>
+        <div flex="30" ng-controller="userListCtrl" style="overflow:scroll">
+            <md-content>
+                <div ng-controller="userSearchCtrl as ctrl">
+                    <md-autocomplete ng-disabled="ctrl.isDisabled" md-no-cache="ctrl.noCache" md-selected-item="ctrl.selectedItem" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)" md-search-text="ctrl.searchText" md-selected-item-change="ctrl.selectedItemChange(item)" md-items="item in ctrl.querySearch(ctrl.searchText)" md-item-text="item.display" md-min-length="0" placeholder="Search User">
+                        <md-item-template>
+                            <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            No states matching "{{ctrl.searchText}}" were found.
+                            <a ng-click="ctrl.newState(ctrl.searchText)">Create a new one!</a>
+                        </md-not-found>
+                    </md-autocomplete>
+                </div>
+                <md-list>
+                    <md-subheader class="md-no-sticky">Online Users</md-subheader>
+                    <md-list-item class="md-3-line" ng-repeat="item in todos">
+                        <img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" />
+                        <div class="md-list-item-text" layout="column">
+                            <h3>{{ item.who }}</h3>
+                            <h4>{{ item.what }}</h4>
+                            <p>{{ item.notes }}</p>
+                        </div>
+                    </md-list-item>
+                    <md-divider></md-divider>
+                    <md-subheader class="md-no-sticky">Offline Users</md-subheader>
+                    <md-list-item class="md-2-line">
+                        <img ng-src="{{todos[0].face}}?20" class="md-avatar" alt="{{todos[0].who}}" />
+                        <div class="md-list-item-text">
+                            <h3>{{ todos[0].who }}</h3>
+                            <p>Secondary text</p>
+                        </div>
+                    </md-list-item>
+                    <!--                     <md-divider></md-divider> -->
+                    <!--                     <md-subheader class="md-no-sticky">3 line item, long paragraph (see on mobile)</md-subheader> -->
+                    <!--                     <md-list-item class="md-3-line md-long-text"> -->
+                    <!--                         <img ng-src="{{todos[0].face}}?25" class="md-avatar" alt="{{todos[0].who}}" /> -->
+                    <!--                         <div class="md-list-item-text"> -->
+                    <!--                             <h3>{{ todos[0].who }}</h3> -->
+                    <!--                             <p> -->
+                    <!--                                 Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. -->
+                    <!--                             </p> -->
+                    <!--                         </div> -->
+                    <!--                     </md-list-item> -->
+                    <!--                     <md-list-item class="md-3-line md-long-text"> -->
+                    <!--                         <img ng-src="{{todos[1].face}}?25" class="md-avatar" alt="{{todos[1].who}}" /> -->
+                    <!--                         <div class="md-list-item-text"> -->
+                    <!--                             <h3>{{ todos[1].who }}</h3> -->
+                    <!--                             <p> -->
+                    <!--                                 Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litra torquent per conubia nostra, per inceptos himenaeos. -->
+                    <!--                             </p> -->
+                    <!--                         </div> -->
+                    <!--                     </md-list-item> -->
+                    <!--                     <md-divider></md-divider> -->
+                    <md-subheader class="md-no-sticky">Classes</md-subheader>
+                    <md-list-item class="md-2-line" ng-repeat="phone in phones">
+                        <md-icon md-svg-icon="communication:phone" ng-if="$index !== 2" ng-class="{'md-avatar-icon': $index === 1}"></md-icon>
+                        <div class="md-list-item-text" ng-class="{'md-offset': $index == 2 }">
+                            <h3> {{ phone.number }} </h3>
+                            <p> {{ phone.type }} </p>
+                        </div>
+                    </md-list-item>
+                </md-list>
+            </md-content>
+        </div>
+        <div ng-controller="chatListCtrl" flex="70" style="overflow:scroll">
+            <md-content>
+                <md-list>
+                    <md-subheader class="md-no-sticky">Online Users</md-subheader>
+                    <md-divider></md-divider>
+                    <md-subheader class="md-no-sticky">3 line item, long paragraph (see on mobile)</md-subheader>
+                    <md-list-item class="md-3-line md-long-text">
+                        <img ng-src="{{todos[0].face}}?25" class="md-avatar" alt="{{todos[0].who}}" />
+                        <div class="md-list-item-text">
+                            <h3>{{ todos[0].who }}</h3>
+                            <p>
+                                Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+                            </p>
+                        </div>
+                    </md-list-item>
+                    <md-list-item class="md-3-line md-long-text">
+                        <img ng-src="{{todos[1].face}}?25" class="md-avatar" alt="{{todos[1].who}}" />
+                        <div class="md-list-item-text">
+                            <h3>{{ todos[1].who }}</h3>
+                            <p>
+                                Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh. Quisque volutpat condimentum velit. Class aptent taciti sociosqu ad litra torquent per conubia nostra, per inceptos himenaeos.
+                            </p>
+                        </div>
+                    </md-list-item>
+                    <md-divider></md-divider>
+                </md-list>
+            </md-content>
+            <md-whiteframe class="md-whiteframe-1dp bgframe" layout-padding layout layout-align="center center">
+                <div flex ng-controller="chatSendCtrl" layout="row" layout-align=" end">
+                    <div flex="70">
+                        <md-input-container flex class="md-block">
+                            <input ng-model="user.address">
+                    </div>
+                    <div flex="30" class="md-block">
+                        <md-button class="md-icon-button" aria-label="Eat cake">
+                            <md-icon>
+                                <i class="material-icons">mic</i>
+                            </md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="Eat cake">
+                            <md-icon>
+                                <i class="material-icons">video_call</i>
+                            </md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="Eat cake">
+                            <md-icon>
+                                <i class="material-icons">image</i>
+                            </md-icon>
+                        </md-button>
+                        <md-button class="md-fab md-primary" aria-label="Use Android">
+                            <md-icon>
+                                <i class="material-icons">send</i>
+                            </md-icon>
+                        </md-button>
+                    </div>
+                    </md-input-container>
+                </div>
+            </md-whiteframe>
+            <script src="../js/jquery.min.js"></script>
+            <script src="../js/bootstrap.js"></script>
+            <script src="js/adminscript.js"></script>
+    </body>
+</html>
